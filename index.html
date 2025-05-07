@@ -1,11 +1,83 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f9fafb;
+    }
 
-const questions = [
-  { question: "Which ancient kingdom in Assam was known for its capital at Pragjyotishpura?", answer: "Kamarupa Kingdom" },
+    .card {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .progress-bar {
+      height: 10px;
+      width: 100%;
+      background-color: #e5e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #3b82f6, #9333ea);
+      width: 0%;
+      transition: width 0.3s ease-in-out;
+    }
+
+    input, button {
+      margin: 0.5rem;
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .correct { color: green; }
+    .incorrect { color: red; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Quiz Time</h2>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <p id="score">Score: 0</p>
+    <p id="question"></p>
+    <input type="text" id="answerInput" placeholder="Your answer" />
+    <div>
+      <button onclick="checkAnswer()">Submit</button>
+      <button onclick="revealAnswer()">Reveal</button>
+      <button onclick="nextQuestion()" style="display: none;" id="nextBtn">Next</button>
+    </div>
+    <p class="message" id="resultMessage"></p>
+    <button onclick="restartQuiz()" style="display: none;" id="restartBtn">Restart Quiz</button>
+  </div>
+
+  <script>
+    const questions = [  { question: "Which ancient kingdom in Assam was known for its capital at Pragjyotishpura?", answer: "Kamarupa Kingdom" },
   { question: "The Moamoria Rebellion significantly weakened which dynasty in Assam?", answer: "Ahom Dynasty" },
   { question: "Who was the first Assamese to be elected as the President of the Indian National Congress?", answer: "Anandaram Dhekial Phukan" },
   { question: "Which treaty ended the First Anglo-Burmese War and ceded Assam to British India?", answer: "Treaty of Yandabo" },
@@ -42,7 +114,7 @@ const questions = [
   { question: "Who won the 59th Jnanpith Award in 2024?", answer: "Vinod Kumar Shukla" },
   { question: "Who was the first Assamese person to win the Jnanpith Award(1979)", answer: "Birendra Kumar Bhattacharya" },
   { question: "How many times has the Jnanpith Award been conferred upon Assamese writers?", answer: "Three times" },
-  { question: "What is Operation Sindoor about?", answer: "Ram Mandir inauguration security and ritual operation" },
+  { question: "What is Operation Sindoor about?", answer: "Removal of terrorist infrastructure" },
   { question: "What is the derivative of sin(x)?", answer: "cos(x)" },
   { question: "What is the square root of 144?", answer: "12" },
   { question: "What is the chemical symbol for gold?", answer: "Au" },
@@ -52,153 +124,115 @@ const questions = [
   { question: "What does LOC stand for in the context of India-Pakistan relations?", answer: "Line of Control" },
   { question: "When was the Ram Mandir inaugurated in Ayodhya?", answer: "22 January 2024" },
   { question: "Where is the newly constructed Ram Mandir located?", answer: "Ayodhya, Uttar Pradesh" },
-  { question: "Which Indian temple was inaugurated by Prime Minister Modi in January 2024?", answer: "Ram Mandir" },
-  { question: "What is Sunita Williams' full name?\n\na) Sunita Lyn Williams\nb) Sunita Patel Williams\nc) Sunita Reddy Williams\nd) Sunita Sharma Williams", answer: "a" },
-  { question: "In which year was Sunita Williams born?\n\na) 1960\nb) 1965\nc) 1970\nd) 1975", answer: "b" },
-  { question: "What is Sunita Williams' connection to India?\n\na) She was born in India\nb) Her father was Indian\nc) She studied in India\nd) She worked in India before joining NASA", answer: "b" },
-  { question: "Which branch of the U.S. military did Sunita Williams serve in before becoming an astronaut?\n\na) U.S. Army\nb) U.S. Coast Guard\nc) U.S. Air Force\nd) U.S. Navy", answer: "d" },
-  { question: "In which year was Sunita Williams selected as a NASA astronaut?\n\na) 1993\nb) 1998\nc) 2001\nd) 2005", answer: "b" },
-  { question: "In which year did Sunita Williams become the commander of the International Space Station?\n\na) 2005\nb) 2007\nc) 2012\nd) 2015", answer: "c" },
-  { question: "Which sport did Sunita Williams famously run while in space?\n\na) Marathon\nb) Swimming race\nc) Cycling race\nd) Sprint race", answer: "a" },
-  { question: "Which spacecraft will Sunita Williams pilot in her upcoming space mission?\n\na) SpaceX Dragon\nb) Boeing Starliner\nc) Orion Capsule\nd) Blue Origin New Shepard", answer: "b" },
-  { question: "Sunita Williams has been honoured with which prestigious space award?\n\na) Bharat Ratna\nb) NASA Space Flight Medal\nc) Nobel Prize in Physics\nd) Padma Bhushan", answer: "b" },
-  { question: "During which mission did Sunita Williams set a record for the longest spaceflight by a woman at the time?\n\na) STS-116\nb) STS-121\nc) Expedition 14/15\nd) Expedition 22/23", answer: "c" }
-];
+  { question: "Which Indian temple was inaugurated by Prime Minister Modi in January 2024?", answer: "Ram Mandir" },];
 
-function fuzzyMatch(input, answer) {
-  const normalize = (str) =>
-    str.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+    let currentIndex = Math.floor(Math.random() * questions.length);
+    let score = 0;
+    let questionsAnswered = 0;
+    const answeredIndices = new Set();
 
-  const a = normalize(input);
-  const b = normalize(answer);
-  if (!a) return false;
-  if (a === b) return true;
+    const questionEl = document.getElementById("question");
+    const answerInput = document.getElementById("answerInput");
+    const resultMessage = document.getElementById("resultMessage");
+    const progressEl = document.getElementById("progress");
+    const scoreEl = document.getElementById("score");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
 
-  const distance = (s1, s2) => {
-    const dp = Array(s1.length + 1).fill(null).map(() => Array(s2.length + 1).fill(0));
-    for (let i = 0; i <= s1.length; i++) dp[i][0] = i;
-    for (let j = 0; j <= s2.length; j++) dp[0][j] = j;
-    for (let i = 1; i <= s1.length; i++) {
-      for (let j = 1; j <= s2.length; j++) {
-        const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
-        dp[i][j] = Math.min(
-          dp[i - 1][j] + 1,
-          dp[i][j - 1] + 1,
-          dp[i - 1][j - 1] + cost
-        );
+    function fuzzyMatch(input, answer) {
+      const normalize = (str) =>
+        str.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+
+      const a = normalize(input);
+      const b = normalize(answer);
+      if (!a) return false;
+      if (a === b) return true;
+
+      const dp = Array(a.length + 1).fill().map(() => Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+        }
+      }
+      const dist = dp[a.length][b.length];
+      return dist <= 3 || a.includes(b) || b.includes(a);
+    }
+
+    function updateProgress() {
+      const percent = (questionsAnswered / questions.length) * 100;
+      progressEl.style.width = percent + "%";
+    }
+
+    function loadQuestion() {
+      questionEl.textContent = questions[currentIndex].question;
+      answerInput.value = "";
+      resultMessage.textContent = "";
+      nextBtn.style.display = "none";
+    }
+
+    function checkAnswer() {
+      const userAnswer = answerInput.value.trim();
+      if (!userAnswer) return;
+
+      if (answeredIndices.has(currentIndex)) return;
+
+      const correct = fuzzyMatch(userAnswer, questions[currentIndex].answer);
+      questionsAnswered++;
+      if (correct) {
+        score++;
+        resultMessage.textContent = "Correct!";
+        resultMessage.className = "message correct";
+      } else {
+        resultMessage.textContent = `Wrong. Correct Answer: ${questions[currentIndex].answer}`;
+        resultMessage.className = "message incorrect";
+      }
+      scoreEl.textContent = `Score: ${score}`;
+      updateProgress();
+      answeredIndices.add(currentIndex);
+      nextBtn.style.display = "inline-block";
+
+      if (answeredIndices.size === questions.length) {
+        restartBtn.style.display = "inline-block";
+        questionEl.textContent = "Quiz Complete!";
+        answerInput.style.display = "none";
+        nextBtn.style.display = "none";
       }
     }
-    return dp[s1.length][s2.length];
-  };
 
-  const dist = distance(a, b);
-  return dist <= 3 || a.includes(b) || b.includes(a);
-}
-
-export default function QuizApp() {
-  const [currentIndex, setCurrentIndex] = useState(Math.floor(Math.random() * questions.length));
-  const [userAnswer, setUserAnswer] = useState("");
-  const [isCorrect, setIsCorrect] = useState(null);
-  const [score, setScore] = useState(0);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [answeredIndices, setAnsweredIndices] = useState([]);
-
-  const checkAnswer = () => {
-    if (showAnswer) return;
-    const trimmedAnswer = userAnswer.trim();
-    if (trimmedAnswer === "") return;
-    const correct = fuzzyMatch(trimmedAnswer, questions[currentIndex].answer);
-    setIsCorrect(correct);
-    if (correct) setScore(score + 1);
-    setQuestionsAnswered(questionsAnswered + 1);
-    setShowAnswer(true);
-    setAnsweredIndices([...answeredIndices, currentIndex]);
-  };
-
-  const nextQuestion = () => {
-    const remainingIndices = questions
-      .map((_, index) => index)
-      .filter(index => !answeredIndices.includes(index));
-
-    if (remainingIndices.length === 0) return;
-
-    const newIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
-    setCurrentIndex(newIndex);
-    setUserAnswer("");
-    setIsCorrect(null);
-    setShowAnswer(false);
-  };
-
-  const revealAnswer = () => {
-    if (!answeredIndices.includes(currentIndex)) {
-      setQuestionsAnswered(questionsAnswered + 1);
-      setAnsweredIndices([...answeredIndices, currentIndex]);
+    function nextQuestion() {
+      const remaining = questions.map((_, i) => i).filter(i => !answeredIndices.has(i));
+      if (remaining.length === 0) return;
+      currentIndex = remaining[Math.floor(Math.random() * remaining.length)];
+      loadQuestion();
     }
-    setShowAnswer(true);
-  };
 
-  const restartQuiz = () => {
-    setScore(0);
-    setQuestionsAnswered(0);
-    setAnsweredIndices([]);
-    setCurrentIndex(Math.floor(Math.random() * questions.length));
-    setUserAnswer("");
-    setIsCorrect(null);
-    setShowAnswer(false);
-  };
+    function revealAnswer() {
+      if (!answeredIndices.has(currentIndex)) {
+        questionsAnswered++;
+        answeredIndices.add(currentIndex);
+      }
+      resultMessage.textContent = `Correct Answer: ${questions[currentIndex].answer}`;
+      resultMessage.className = "message incorrect";
+      updateProgress();
+      nextBtn.style.display = "inline-block";
+    }
 
-  const getProgressColor = () => {
-    const colors = ["from-red-500", "from-yellow-500", "from-green-500", "from-blue-500", "from-purple-500"];
-    return colors[score % colors.length];
-  };
+    function restartQuiz() {
+      score = 0;
+      questionsAnswered = 0;
+      answeredIndices.clear();
+      currentIndex = Math.floor(Math.random() * questions.length);
+      answerInput.style.display = "inline-block";
+      restartBtn.style.display = "none";
+      scoreEl.textContent = `Score: ${score}`;
+      updateProgress();
+      loadQuestion();
+    }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <Card className="w-full max-w-xl text-center">
-        <CardContent className="space-y-4">
-          <h2 className="text-xl font-bold">Quiz Time</h2>
-          <div className="relative w-full h-2 rounded-full bg-gray-200 overflow-hidden">
-            <div
-              className={`absolute top-0 left-0 h-full transition-all duration-300 bg-gradient-to-r ${getProgressColor()} to-transparent`}
-              style={{ width: `${(questionsAnswered / questions.length) * 100}%` }}
-            />
-          </div>
-          <p className="text-sm text-gray-500">Score: {score} / {questions.length}</p>
-
-          {questionsAnswered < questions.length ? (
-            <>
-              <p className="text-lg font-medium">{questions[currentIndex].question}</p>
-              <Input
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Your answer"
-                className="w-full"
-                disabled={showAnswer}
-              />
-              <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                <Button onClick={checkAnswer} disabled={showAnswer}>Submit</Button>
-                {!showAnswer && (
-                  <Button variant="outline" onClick={revealAnswer}>Reveal Answer</Button>
-                )}
-                {showAnswer && (
-                  <Button variant="secondary" onClick={nextQuestion}>Next</Button>
-                )}
-              </div>
-              {showAnswer && (
-                <p className={`text-sm font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}>
-                  {isCorrect ? "Correct!" : `Wrong. Correct Answer: ${questions[currentIndex].answer}`}
-                </p>
-              )}
-            </>
-          ) : (
-            <>
-              <p className="text-lg font-semibold">Quiz Complete! Final Score: {score} / {questions.length}</p>
-              <Button className="mt-2" onClick={restartQuiz}>Restart Quiz</Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+    loadQuestion();
+  </script>
+</body>
+</html>

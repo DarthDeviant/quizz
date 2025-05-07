@@ -3,23 +3,38 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
 
-    const questions = [  { question: "Which ancient kingdom in Assam was known for its capital at Pragjyotishpura?", answer: "Kamarupa Kingdom" },
+const allQuestions = [
+  {
+    question: "Which ancient kingdom in Assam was known for its capital at Pragjyotishpura?",
+    answer: "Kamarupa Kingdom",
+  },
   { question: "The Moamoria Rebellion significantly weakened which dynasty in Assam?", answer: "Ahom Dynasty" },
-  { question: "Who was the first Assamese to be elected as the President of the Indian National Congress?", answer: "Anandaram Dhekial Phukan" },
-  { question: "Which treaty ended the First Anglo-Burmese War and ceded Assam to British India?", answer: "Treaty of Yandabo" },
+  {
+    question: "Who was the first Assamese to be elected as the President of the Indian National Congress?",
+    answer: "Anandaram Dhekial Phukan",
+  },
+  {
+    question: "Which treaty ended the First Anglo-Burmese War and ceded Assam to British India?",
+    answer: "Treaty of Yandabo",
+  },
   { question: "Who was the first Assamese woman to be elected to the Lok Sabha?", answer: "Renuka Devi Barkataki" },
-  { question: "Who composed the state song of Assam, \"O Mur Apunar Desh\"?", answer: "Lakshminath Bezbaroa" },
+  { question: 'Who composed the state song of Assam, "O Mur Apunar Desh"?', answer: "Lakshminath Bezbaroa" },
   { question: "What is the Bihu festival primarily associated with?", answer: "Agriculture" },
   { question: "Which Assamese leader is also known as the 'Iron Man of Assam'?", answer: "Gopinath Bordoloi" },
-  { question: "In which year was Assam separated from Bengal to become a Chief Commissioner's Province?", answer: "1874" },
+  {
+    question: "In which year was Assam separated from Bengal to become a Chief Commissioner's Province?",
+    answer: "1874",
+  },
   { question: "Which river island in Assam is considered the world's largest?", answer: "Majuli" },
   { question: "What is the capital of Assam?", answer: "Dispur" },
   { question: "What is the primary gas responsible for the greenhouse effect on Earth?", answer: "Carbon Dioxide" },
-  { question: "Which part of the human brain is responsible for regulating balance and coordination?", answer: "Cerebellum" },
+  {
+    question: "Which part of the human brain is responsible for regulating balance and coordination?",
+    answer: "Cerebellum",
+  },
   { question: "What is the SI unit of electric current?", answer: "Ampere" },
   { question: "Which planet in our solar system has the most moons?", answer: "Saturn" },
   { question: "What is the process by which plants release water vapor into the atmosphere?", answer: "Transpiration" },
@@ -29,20 +44,38 @@ import { AlertCircle, CheckCircle2 } from "lucide-react"
   { question: "Which city will host the G20 Summit in 2025?", answer: "Nasrec, Johannesburg, South Africa" },
   { question: "What is the name of India's mission to study the Sun launched in 2023?", answer: "Aditya-L1" },
   { question: "Who is the current President of India?", answer: "Droupadi Murmu" },
-  { question: "Which Indian state recently became the first to implement a Uniform Civil Code?", answer: "Uttarakhand" },
+  {
+    question: "Which Indian state recently became the first to implement a Uniform Civil Code?",
+    answer: "Uttarakhand",
+  },
   { question: "Which country won the FIFA World Cup in 2022?", answer: "Argentina" },
   { question: "Who holds the record for the fastest century in T20 International cricket?", answer: "David Miller" },
-  { question: "Which Indian athlete won a gold medal in javelin throw at the Tokyo 2020 Olympics?", answer: "Neeraj Chopra" },
+  {
+    question: "Which Indian athlete won a gold medal in javelin throw at the Tokyo 2020 Olympics?",
+    answer: "Neeraj Chopra",
+  },
   { question: "Who won the 2024 Nobel Prize in Literature?", answer: "Han Kang" },
   { question: "Who won the 2023 Nobel Prize in Literature?", answer: "Jon Fosse" },
   { question: "Which organization was awarded the 2024 Nobel Peace Prize?", answer: "Nihon Hidankyo" },
   { question: "Who was awarded the 2023 Nobel Peace Prize?", answer: "Narges Mohammadi" },
-  { question: "Who were the recipients of the 2023 Nobel Prize in Physics?", answer: "Pierre Agostini, Ferenc Krausz and Anne L'Huillier" },
-  { question: "Who were the recipients of the 2024 Nobel Prize in Physics?", answer: "John J. Hopfield, Geoffry Hinton" },
+  {
+    question: "Who were the recipients of the 2023 Nobel Prize in Physics?",
+    answer: "Pierre Agostini, Ferenc Krausz and Anne L'Huillier",
+  },
+  {
+    question: "Who were the recipients of the 2024 Nobel Prize in Physics?",
+    answer: "John J. Hopfield, Geoffry Hinton",
+  },
   { question: "When was the first Nobel Prize for Physics awared?", answer: "1901" },
-  { question: "Which school awarded the 2024 Nobel Prize for Physics?", answer: "Royal Swedish Academy of Sciences, Stockholm, Sweden" },
+  {
+    question: "Which school awarded the 2024 Nobel Prize for Physics?",
+    answer: "Royal Swedish Academy of Sciences, Stockholm, Sweden",
+  },
   { question: "Who won the 59th Jnanpith Award in 2024?", answer: "Vinod Kumar Shukla" },
-  { question: "Who was the first Assamese person to win the Jnanpith Award(1979)", answer: "Birendra Kumar Bhattacharya" },
+  {
+    question: "Who was the first Assamese person to win the Jnanpith Award(1979)",
+    answer: "Birendra Kumar Bhattacharya",
+  },
   { question: "How many times has the Jnanpith Award been conferred upon Assamese writers?", answer: "Three times" },
   { question: "What is Operation Sindoor about?", answer: "Removal of terrorist infrastructure" },
   { question: "What is the derivative of sin(x)?", answer: "cos(x)" },
@@ -54,21 +87,64 @@ import { AlertCircle, CheckCircle2 } from "lucide-react"
   { question: "What does LOC stand for in the context of India-Pakistan relations?", answer: "Line of Control" },
   { question: "When was the Ram Mandir inaugurated in Ayodhya?", answer: "22 January 2024" },
   { question: "Where is the newly constructed Ram Mandir located?", answer: "Ayodhya, Uttar Pradesh" },
-  { question: "What is the Assam Sahitya Sabha?", answer: "The Assam Sahitya Sabha is a literary organization in Assam dedicated to the development of Assamese literature and culture." },
+  {
+    question: "What is the Assam Sahitya Sabha?",
+    answer:
+      "The Assam Sahitya Sabha is a literary organization in Assam dedicated to the development of Assamese literature and culture.",
+  },
   { question: "When was the Assam Sahitya Sabha founded?", answer: "It was founded in 1917." },
-  { question: "Where was the first session of the Assam Sahitya Sabha held?", answer: "The first session was held at Sivasagar in 1917." },
-  { question: "Who was the first president of the Assam Sahitya Sabha?", answer: "Padmanath Gohain Baruah was the first president of the Assam Sahitya Sabha." },
-  { question: "What is the main objective of the Assam Sahitya Sabha?", answer: "Its main objective is to promote and develop Assamese language, literature, and culture." },
-  { question: "How often does the Assam Sahitya Sabha hold its sessions?", answer: "It holds annual sessions in different parts of Assam." },
-  { question: "In which script does the Assam Sahitya Sabha promote the Assamese language?", answer: "The Assamese language is promoted using the Assamese script." },
-  { question: "Which is the official publication of the Assam Sahitya Sabha?", answer: "The official publication is 'Assam Sahitya Sabha Patrika'." },
-  { question: "Who can become a member of the Assam Sahitya Sabha?", answer: "Any person interested in Assamese literature and culture can become a member." },
-  { question: "Does the Assam Sahitya Sabha promote other languages of Assam?", answer: "Yes, it also promotes the development of other regional languages spoken in Assam." },
-  { question: "Which Indian temple was inaugurated by Prime Minister Modi in January 2024?", answer: "Ram Mandir" },];
+  {
+    question: "Where was the first session of the Assam Sahitya Sabha held?",
+    answer: "The first session was held at Sivasagar in 1917.",
+  },
+  {
+    question: "Who was the first president of the Assam Sahitya Sabha?",
+    answer: "Padmanath Gohain Baruah was the first president of the Assam Sahitya Sabha.",
+  },
+  {
+    question: "What is the main objective of the Assam Sahitya Sabha?",
+    answer: "Its main objective is to promote and develop Assamese language, literature, and culture.",
+  },
+  {
+    question: "How often does the Assam Sahitya Sabha hold its sessions?",
+    answer: "It holds annual sessions in different parts of Assam.",
+  },
+  {
+    question: "In which script does the Assam Sahitya Sabha promote the Assamese language?",
+    answer: "The Assamese language is promoted using the Assamese script.",
+  },
+  {
+    question: "Which is the official publication of the Assam Sahitya Sabha?",
+    answer: "The official publication is 'Assam Sahitya Sabha Patrika'.",
+  },
+  {
+    question: "Who can become a member of the Assam Sahitya Sabha?",
+    answer: "Any person interested in Assamese literature and culture can become a member.",
+  },
+  {
+    question: "Does the Assam Sahitya Sabha promote other languages of Assam?",
+    answer: "Yes, it also promotes the development of other regional languages spoken in Assam.",
+  },
+  { question: "Which Indian temple was inaugurated by Prime Minister Modi in January 2024?", answer: "Ram Mandir" },
+]
 
+// Function to shuffle an array using Fisher-Yates algorithm
+const shuffleArray = (array) => {
+  const newArray = [...array]
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+  }
+  return newArray
+}
 
 export function QuizApp() {
-  const [currentIndex, setCurrentIndex] = useState(Math.floor(Math.random() * questions.length))
+  // Track used question indices across quiz sessions
+  const [usedQuestionIndices, setUsedQuestionIndices] = useState(new Set())
+  const [currentQuizSet, setCurrentQuizSet] = useState(1)
+  const [questions, setQuestions] = useState([])
+
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [questionsAnswered, setQuestionsAnswered] = useState(0)
   const [answeredIndices, setAnsweredIndices] = useState(new Set())
@@ -79,8 +155,47 @@ export function QuizApp() {
   const [quizComplete, setQuizComplete] = useState(false)
   const [progress, setProgress] = useState(0)
 
+  // For gradient animation
+  const [gradientPosition, setGradientPosition] = useState(0)
+  const totalSets = 5 // 5 sets of 10 questions each
+
+  // Select 10 random questions that haven't been used yet
+  const selectRandomQuestions = () => {
+    // If we've used most questions, reset the used indices
+    if (usedQuestionIndices.size >= allQuestions.length - 10) {
+      setUsedQuestionIndices(new Set())
+      setCurrentQuizSet(1)
+    }
+
+    // Get available question indices (not used yet)
+    const availableIndices = allQuestions.map((_, index) => index).filter((index) => !usedQuestionIndices.has(index))
+
+    // Shuffle available indices and take first 10
+    const shuffledIndices = shuffleArray(availableIndices)
+    const selectedIndices = shuffledIndices.slice(0, 10)
+
+    // Mark these questions as used
+    const newUsedIndices = new Set(usedQuestionIndices)
+    selectedIndices.forEach((index) => newUsedIndices.add(index))
+    setUsedQuestionIndices(newUsedIndices)
+
+    // Create the questions array
+    return selectedIndices.map((index) => allQuestions[index])
+  }
+
+  // Initialize questions on first render
+  useEffect(() => {
+    const initialQuestions = selectRandomQuestions()
+    setQuestions(initialQuestions)
+  }, [])
+
   useEffect(() => {
     setProgress((questionsAnswered / questions.length) * 100)
+
+    // Update gradient position based on current question
+    if (questions.length > 0) {
+      setGradientPosition(((questionsAnswered % questions.length) / questions.length) * 100)
+    }
   }, [questionsAnswered, questions.length])
 
   const fuzzyMatch = (input, answer) => {
@@ -165,15 +280,38 @@ export function QuizApp() {
   }
 
   const restartQuiz = () => {
+    // Select a new set of questions
+    const newQuestions = selectRandomQuestions()
+    setQuestions(newQuestions)
+
+    // Increment the quiz set counter
+    setCurrentQuizSet((prev) => (prev % totalSets) + 1)
+
+    // Reset quiz state
     setScore(0)
     setQuestionsAnswered(0)
     setAnsweredIndices(new Set())
-    setCurrentIndex(Math.floor(Math.random() * questions.length))
+    setCurrentIndex(0)
     setUserAnswer("")
     setResultMessage("")
     setIsCorrect(null)
     setShowNextButton(false)
     setQuizComplete(false)
+  }
+
+  // Create the gradient style for the progress bar - FIXED to avoid mixing shorthand and non-shorthand properties
+  const gradientStyle = {
+    backgroundImage: `linear-gradient(90deg, 
+      rgba(34, 197, 94, 0.9) ${(gradientPosition + 0) % 100}%, 
+      rgba(59, 130, 246, 0.9) ${(gradientPosition + 33) % 100}%, 
+      rgba(234, 179, 8, 0.9) ${(gradientPosition + 66) % 100}%, 
+      rgba(34, 197, 94, 0.9) ${(gradientPosition + 100) % 100}%)`,
+    backgroundSize: "200% 100%",
+    backgroundPosition: `${gradientPosition}% 0%`,
+    width: `${progress}%`,
+    height: "100%",
+    borderRadius: "9999px",
+    transition: "width 0.5s ease-out, background-position 0.5s ease-out",
   }
 
   return (
@@ -183,13 +321,15 @@ export function QuizApp() {
         <CardDescription className="text-center">
           {quizComplete
             ? `Final Score: ${score}/${questions.length} (${Math.round((score / questions.length) * 100)}%)`
-            : `Question ${questionsAnswered + 1} of ${questions.length}`}
+            : `Question ${questionsAnswered + 1} of ${questions.length} • Set ${currentQuizSet} of ${totalSets}`}
         </CardDescription>
-        <Progress value={progress} className="h-2 mt-2" />
+        <div className="h-2 mt-2 bg-gray-200 rounded-full overflow-hidden">
+          <div style={gradientStyle}></div>
+        </div>
       </CardHeader>
 
       <CardContent>
-        {!quizComplete ? (
+        {!quizComplete && questions.length > 0 ? (
           <>
             <p className="text-lg font-medium mb-4">{questions[currentIndex].question}</p>
             <Input
@@ -217,7 +357,7 @@ export function QuizApp() {
               </div>
             )}
           </>
-        ) : (
+        ) : quizComplete ? (
           <div className="text-center py-4">
             <h3 className="text-xl font-bold mb-2">Quiz Complete!</h3>
             <p className="mb-4">
@@ -233,11 +373,15 @@ export function QuizApp() {
               <p className="text-red-600 font-medium">Keep studying and try again!</p>
             )}
           </div>
+        ) : (
+          <div className="text-center py-4">
+            <p>Loading questions...</p>
+          </div>
         )}
       </CardContent>
 
       <CardFooter className="flex flex-wrap justify-center gap-2">
-        {!quizComplete ? (
+        {!quizComplete && questions.length > 0 ? (
           <>
             {!showNextButton ? (
               <>
@@ -251,7 +395,7 @@ export function QuizApp() {
             )}
           </>
         ) : (
-          <Button onClick={restartQuiz}>Restart Quiz</Button>
+          <Button onClick={restartQuiz}>{currentQuizSet < totalSets ? "Next Set" : "Start Over"}</Button>
         )}
       </CardFooter>
     </Card>
